@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="input_part">
+        <div class="top">
+            <div class="identif">
+                <fieldset>
+                    <legend>Idetification</legend>
+                    <table>
+                        <tr>
+                            <td>Code employer</td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <td>Nom</td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <td>Prenom</td>
+                            <td><input type="text"></td>
+                        </tr>
+                    </table>
+
+
+                </fieldset>
+            </div>
+            <div class="identif2">
+                <fieldset>
+                    <legend>Situation Familliale</legend>
+                    <div class="situation">
+                        <table>
+                            <tr>
+                                <td><input type="radio" name="situaion" id="celeb" value="celebataire"></td>
+                                <td>Celebataire</td>
+                            </tr>
+                            <tr>
+                                <td><input type="radio" name="situaion" value="marie" id="radio_marie"></td>
+                                <td>marie</td>
+                                <td>Nb Enfants <input type="text" id="nb_enfts"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+                <br>
+                <fieldset>
+                    <table>
+                        <tr>
+                            <td>Date d'emouche (nombre d'ans)</td>
+                            <td><input type="text" id="nb_ans"></td>
+                        </tr>
+                        <tr>
+                            <td>Category</td>
+                            <td><select id="category" onchange="slb(), allocation(), preatation()">
+                                    <optgroup label="Slaires">
+                                        <option></option>
+                                        <option value="6000">A </option>
+                                        <option value="4570">B </option>
+                                        <option value="3100">C </option>
+                                        <option value="2650">D </option>
+                                    </optgroup>
+                                </select></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+        </div>
+        <!-- start Middle -->
+        <div class="middle">
+            <div aria-invalid="sexe">
+                <fieldset>
+                    <legend>Sexe </legend>
+
+                    <label>Homme</label>
+                    <input type="radio" id="femme" value="homme" name="sexe">
+
+                    <label>Femme</label>
+                    <input type="radio" id="femme" value="femme" name="sexe">
+
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+    <fieldset>
+        <legend>Salaire</legend>
+        <div class="output_part">
+            <div>
+                <label for="">salaire de base</label>
+                <input type="text" id="slb">
+                <label>CNSS</label>
+                <input type="text" id="cnss">
+            </div>
+            <div>
+                <label for="">Impot</label>
+                <input type="text" id="impot">
+                <label for="">prime dencienite</label>
+                <input type="text" id="prim_enc">
+            </div>
+            <hr>
+            <div>
+                <label for="">Prime d'allocation</label>
+                <input type="text" id="prm_allc">
+                <label for="">Prime de preatation</label>
+                <input type="text" id="prim_pr">
+            </div>
+        </div>
+        <div class="res_container">
+            <label for="">Salair Net </label>
+            <h3 id="snet"></h3>
+        </div>
+    </fieldset>
+    <div class="btn">
+        <button class="calc_btn calc_reset" onclick="calcsnet()">Calculer Snet</button>
+        <input type="reset" name="" id="reset" class="calc_reset" onclick="resetsll()">
+    </div>
+
+    </form>
+
+
+    <script>
+
+
+
+        function slb() {
+            var sb = document.getElementById("category").value;
+            var nb_anc = document.getElementById("nb_ans").value;
+
+            document.getElementById("slb").value = sb;
+            if (sb <= 3200) {
+                var taux = 3.75;
+            }
+            else {
+                var taux = 3.36;
+            }
+
+            document.getElementById("impot").value = parseFloat(sb * (taux / 100)).toFixed(2);
+            document.getElementById("cnss").value = parseFloat((sb * 4.29 / 100)).toFixed(2);
+
+            if (nb_anc <= 5) {
+                document.getElementById("prim_enc").value = parseFloat(sb * (5 / 100)).toFixed(2);
+            }
+            else if (nb_anc <= 10) {
+                document.getElementById("prim_enc").value = parseFloat(sb * (7 / 100)).toFixed(2);
+            }
+            else {
+                document.getElementById("prim_enc").value = parseFloat(sb * (9 / 100)).toFixed(2);
+            }
+        };
+
+
+        // fonction prime d'allocation 
+        function allocation() {
+            var nb_enf = document.getElementById("nb_enfts").value;
+
+            if (nb_enf <= 3) {
+                p_alloc = parseFloat(150 * nb_enf).toFixed(2)
+                document.getElementById("prm_allc").value = p_alloc;
+            }
+            else if (nb_enf <= 7) {
+                nb_enf -= 3;
+                p_alloc = (150 * 3) + (nb_enf * 36);
+                document.getElementById("prm_allc").value = parseFloat(p_alloc).toFixed(2);
+            } else {
+                p_alloc = (150 * 3) + (4 * 36);
+                document.getElementById("prm_allc").value = parseFloat(p_alloc).toFixed(2);
+            }
+        };
+
+        function preatation() {
+
+            if (document.getElementById("radio_marie").checked == true) {
+                document.getElementById("prim_pr").value = 300;
+
+            } else {
+                document.getElementById("prim_pr").value = "0.00";
+            }
+        };
+
+        //  Fonction Clcule Salaire Net
+        function calcsnet() {
+            let sb = document.getElementById("slb").value;
+            let cnss = document.getElementById("cnss").value;
+            let impot = document.getElementById("impot").value;
+            let panc = document.getElementById("prim_enc").value;
+            let pallc = document.getElementById("prm_allc").value;
+            let ppr = document.getElementById("prim_pr").value;
+
+            let snet = Number(sb) - (Number(cnss) - Number(impot)) + Number(panc) + Number(pallc) + Number(ppr);
+
+            document.getElementById("snet").innerHTML = snet + " DH";
+        };
+
+        function resetsll() {
+            document.getElementById("input_part").resetsll = "";
+
+        };
+
+    </script>
+</body>
+
+</html>
